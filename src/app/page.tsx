@@ -15,7 +15,7 @@ export default function Home() {
 
 
   return (
-    <main className="min-w-screen min-h-screen">
+    <main className="min-w-screen min-h-screen text-white">
       <div className="flex flex-col items-center gap-5 justify-center h-screen bg-neutral-800/95">
         <div className="flex flex-col items-center gap-10">
           <h1 className="font-bold text-8xl">Video Calling app</h1>

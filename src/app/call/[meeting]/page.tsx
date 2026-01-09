@@ -9,7 +9,8 @@ import {
   StreamVideoClient, 
   useCallStateHooks, 
   ParticipantView,
-  useCall
+  useCall,
+  Call
 } from '@stream-io/video-react-sdk';
 
 const MeetingUI = () => {
@@ -76,9 +77,9 @@ const MeetingUI = () => {
 }
 
 function VideoCalling() {
-  const [client, setClient] = useState(null)
-  const [call, setCall] = useState(null)
-  const params = useParams()
+  const [client, setClient] = useState<StreamVideoClient | null>(null)
+  const [call, setCall] = useState<Call | null>(null)
+  const params = useParams<{meeting: string}>()
   const meetingId = params.meeting
 
   useEffect(() => {
@@ -86,23 +87,23 @@ function VideoCalling() {
       if (!meetingId) return;
 
       try {
-        // 1. Get Token
         const res = await fetch('/api/stream', {
           method: 'POST',
           body: JSON.stringify({ id: meetingId })
         });
-        const { token, userId } = await res.json();
+        const { token, userId } = await res.json() as {token: string, userId: string};
 
         if (!token) return;
 
+        const apiKey = process.env.NEXT_PUBLIC_STREAM_KEY!;
+
         const _client = new StreamVideoClient({
-          apiKey: process.env.NEXT_PUBLIC_STREAM_KEY,
+          apiKey: apiKey,
           user: { id: userId },
           token: token,
         });
         setClient(_client);
 
-        // 3. Create Call Instance
         const _call = _client.call('default', meetingId);
         await _call.join({ create: true });
         setCall(_call);
@@ -114,7 +115,6 @@ function VideoCalling() {
 
     initVideo();
 
-    // Cleanup on unmount
     return () => {
         if (call) {
             call.leave();
@@ -123,7 +123,7 @@ function VideoCalling() {
             client.disconnectUser();
         }
     }
-  }, [meetingId]);
+  }, [call, client, meetingId]);
 
   if (!client || !call) return (
     <div className="h-screen w-screen flex items-center justify-center text-white">
