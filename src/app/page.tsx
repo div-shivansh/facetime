@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 export default function Home() {
 
   const router = useRouter()
-  const [meeting, setMeeting] = useState("")
-  const handleSubmit = (e) => {
+  const [meeting, setMeeting] = useState<string>("")
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if(meeting.trim()) {
     router.push(`/call/${meeting}`)
@@ -22,7 +22,7 @@ export default function Home() {
           <span className="text-4xl font-semibold text-neutral-200/60">Please put the meeting code</span>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-4">
-        <input onChange={(e)=> setMeeting(e.target.value)} type="text" className="bg-neutral-400 text-3xl text-center shadow-none border-none rounded-2xl focus:outline-2 outline-offset-2 outline-neutral-400"/>
+        <input onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMeeting(e.target.value)} type="text" className="bg-neutral-400 text-3xl text-center shadow-none border-none rounded-2xl focus:outline-2 outline-offset-2 outline-neutral-400"/>
         <button type="submit" disabled={!meeting.trim()} className="bg-neutral-400/60 disabled:cursor-not-allowed hover:bg-neutral-400/50 cursor-pointer py-0.5 w-full rounded-full text-2xl transition-all duration-150">Enter in Call</button>
         </form>
       </div>
